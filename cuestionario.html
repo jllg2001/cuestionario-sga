@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1B396A">
+  <meta name="description" content="Cuestionario de 12 preguntas sobre el Sistema de Gestión Ambiental del TecNM, con evaluación y botones para compartir el acceso y los resultados por WhatsApp.">
+  <title>Cuestionario SGA | ITAO · TecNM</title>
+
+  <style>
+    /* ================================================================
+       IDENTIDAD INSTITUCIONAL — TODO EL CSS ESTÁ EN ESTE MISMO ARCHIVO
+       ================================================================ */
+    :root {
+      --azul: #1B396A;
+      --blanco: #FFFFFF;
+      --amarillo: #F8FBCA;
+      --texto: #243553;
+      --azul-suave: rgba(27, 57, 106, 0.07);
+      --borde: rgba(27, 57, 106, 0.17);
+      --sombra: 0 12px 34px rgba(27, 57, 106, 0.09);
+      --radio: 19px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f8fbca 0, #ffffff 320px, #ffffff 100%);
+      color: var(--texto);
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button, a, label { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, input:focus-visible, .opcion:focus-within {
+      outline: 3px solid var(--azul);
+      outline-offset: 3px;
+    }
+    .contenedor { max-width: 940px; padding: 0 20px; margin: auto; }
+
+    /* Portada con imágenes originales integradas en base64 */
+    .portada {
+      margin: 28px auto 0;
+      border: 1px solid var(--borde);
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--blanco);
+      box-shadow: var(--sombra);
+    }
+    .portada-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(20px, 5vw, 54px);
+      padding: 23px 24px;
+      min-height: 155px;
+      background: var(--blanco);
+    }
+    .marca { display: flex; justify-content: center; align-items: center; flex: 1; min-width: 0; }
+    .marca-itao img { width: min(100%, 218px); height: 112px; object-fit: contain; }
+    .marca-tecnm img { width: min(100%, 152px); height: 125px; object-fit: contain; }
+    .separador-logos { width: 1px; height: 82px; background: var(--borde); }
+    .cinta {
+      background: var(--amarillo);
+      color: var(--azul);
+      text-align: center;
+      padding: 9px 15px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .portada-cuerpo {
+      background: var(--azul);
+      color: var(--blanco);
+      padding: clamp(26px, 5vw, 46px);
+    }
+    .portada-cuerpo h1 {
+      max-width: 660px;
+      margin: 12px 0 12px;
+      font-size: clamp(1.85rem, 4.5vw, 3rem);
+      line-height: 1.17;
+      letter-spacing: -0.03em;
+    }
+    .portada-cuerpo p { max-width: 640px; margin: 0; opacity: 0.91; }
+    .etiqueta-portada {
+      display: inline-block;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      border-radius: 50px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    .contenedor-principal { padding-top: 28px; padding-bottom: 42px; }
+    .panel {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      padding: clamp(21px, 4vw, 30px);
+      margin-bottom: 22px;
+      box-shadow: var(--sombra);
+    }
+    .titulo-seccion { margin: 0 0 6px; color: var(--azul); font-size: 1.16rem; }
+    .descripcion-seccion { margin: 0 0 20px; font-size: 0.94rem; color: #53617a; }
+    .cuadricula-campos { display: grid; grid-template-columns: 1.4fr 1.2fr 0.75fr; gap: 13px; }
+    .campo label { display: block; margin: 0 0 6px; font-size: 0.87rem; font-weight: 750; color: var(--azul); }
+    .campo input {
+      width: 100%;
+      min-height: 47px;
+      border-radius: 10px;
+      border: 1px solid var(--borde);
+      background: var(--blanco);
+      padding: 10px 12px;
+      color: var(--texto);
+      min-width: 0;
+    }
+    .campo input::placeholder { color: #7f89a0; }
+
+    .barra-fija {
+      position: sticky;
+      z-index: 10;
+      top: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--borde);
+      border-radius: 15px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 16px rgba(27,57,106,0.07);
+    }
+    .barra-cabecera { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: var(--azul); font-size: 0.91rem; font-weight: 800; }
+    .pista { color: #5b6980; font-size: 0.77rem; font-weight: 600; margin-top: 1px; }
+    .barra-pista {
+      background: var(--amarillo);
+      overflow: hidden;
+      height: 10px;
+      border-radius: 100px;
+      margin-top: 10px;
+    }
+    .barra-avance {
+      height: 100%; width: 0;
+      background: var(--azul);
+      border-radius: inherit;
+      transition: width 250ms ease;
+    }
+    .lista-preguntas { display: grid; gap: 17px; }
+    .pregunta {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      padding: clamp(19px, 4vw, 29px);
+      box-shadow: var(--sombra);
+      scroll-margin-top: 110px;
+    }
+    .pregunta.sin-responder { border: 2px dashed var(--azul); background: #fffef0; }
+    .encabezado-pregunta { display: flex; align-items: start; gap: 12px; }
+    .numero {
+      flex: 0 0 auto;
+      display: grid; place-items: center;
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      color: var(--blanco);
+      background: var(--azul);
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+    .pregunta h2 { margin: 2px 0 16px; font-size: clamp(1rem, 2vw, 1.13rem); line-height: 1.42; color: var(--azul); }
+    .opciones { margin-left: 52px; display: grid; gap: 9px; }
+    .opcion {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background 140ms, border-color 140ms, transform 140ms;
+    }
+    .opcion:hover { background: #fcfdea; border-color: var(--azul); transform: translateY(-1px); }
+    .opcion:has(input:checked) { background: var(--amarillo); border-color: var(--azul); }
+    .opcion input { accent-color: var(--azul); width: 19px; height: 19px; flex: 0 0 auto; margin: 2px 0 0; cursor: pointer; }
+    .opcion span { line-height: 1.48; }
+    .opcion strong { color: var(--azul); margin-right: 4px; }
+    .pregunta.evaluada .opcion.correcta { background: var(--amarillo); border-color: var(--azul); border-width: 2px; }
+    .pregunta.evaluada .opcion.incorrecta { background: #f2f4f9; border-color: #8b98ac; border-style: dashed; }
+    .retroalimentacion { display: none; margin: 14px 0 0 52px; padding: 10px 13px; border-radius: 11px; background: var(--azul-suave); font-weight: 750; font-size: 0.86rem; color: var(--azul); }
+    .pregunta.evaluada .retroalimentacion { display: block; }
+
+    .panel-final { margin-top: 22px; text-align: center; }
+    .panel-final p { color: #51627d; margin: 0 0 17px; }
+    .botones { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+    .boton {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; min-height: 48px;
+      padding: 11px 19px;
+      text-align: center;
+      border-radius: 11px;
+      border: 2px solid var(--azul);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 150ms, transform 150ms;
+    }
+    .boton:hover { transform: translateY(-1px); }
+    .boton-primario { background: var(--azul); color: var(--blanco); }
+    .boton-secundario { background: var(--blanco); color: var(--azul); }
+    .boton-suave { background: var(--amarillo); color: var(--azul); }
+    .aviso { min-height: 24px; margin: 14px 0 0; color: var(--azul); font-size: 0.9rem; font-weight: 700; }
+    .resultado {
+      scroll-margin-top: 110px;
+      margin: 22px 0 0;
+      padding: clamp(21px,4vw,30px);
+      border-radius: var(--radio);
+      background: var(--amarillo);
+      border: 2px solid var(--azul);
+      text-align: center;
+    }
+    .resultado[hidden] { display: none; }
+    .resultado h2 { margin: 5px 0 4px; color: var(--azul); font-size: 1.4rem; }
+    .calificacion { color: var(--azul); font-size: clamp(2.4rem, 7vw, 4.7rem); font-weight: 900; line-height: 1.2; letter-spacing: -0.05em; margin: 7px 0; }
+    .detalle-resultado { margin: 8px auto 20px; max-width: 600px; }
+    .aviso-privacidad { margin: 17px auto 0; max-width: 590px; font-size: 0.81rem; color: #445475; }
+    footer { text-align: center; padding: 2px 15px 34px; color: var(--azul); font-size: 0.82rem; font-weight: 700; }
+
+    @media (max-width: 650px) {
+      .contenedor { padding: 0 12px; }
+      .portada { margin-top: 12px; border-radius: 18px; }
+      .portada-logos { padding: 13px 14px; gap: 14px; min-height: 120px; }
+      .marca-itao img { max-width: 155px; height: 90px; }
+      .marca-tecnm img { max-width: 102px; height: 95px; }
+      .separador-logos { height: 54px; }
+      .cinta { font-size: 0.65rem; letter-spacing: 0.07em; }
+      .cuadricula-campos { grid-template-columns: 1fr 1fr; }
+      .campo:first-child { grid-column: 1 / -1; }
+      .pregunta { padding: 18px 14px; }
+      .encabezado-pregunta { gap: 9px; }
+      .numero { width: 35px; height: 35px; }
+      .opciones, .retroalimentacion { margin-left: 0; }
+      .opcion { padding: 12px; }
+      .botones { flex-direction: column; }
+      .boton { width: 100%; }
+    }
+
+    /* Compartir el acceso público al formulario sin un número fijo */
+    .acceso-publico {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--amarillo);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      padding: 18px clamp(18px, 4vw, 25px);
+      margin-bottom: 22px;
+    }
+    .acceso-publico h2 { margin: 0 0 5px; color: var(--azul); font-size: 1.07rem; }
+    .acceso-publico p { margin: 0; font-size: 0.89rem; color: var(--texto); max-width: 550px; }
+    .acceso-publico .boton { flex-shrink: 0; }
+    .mensaje-enlace { width: 100%; min-height: 0; color: var(--azul); font-size: .85rem; font-weight: 750; }
+    .mensaje-enlace:empty { display: none; }
+    @media (max-width: 650px) {
+      .acceso-publico .boton { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+    @media print {
+      body { background: white; }
+      .barra-fija, .panel-final, .botones { display: none !important; }
+      .portada, .panel, .pregunta { box-shadow: none; break-inside: avoid; }
+      .resultado { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header class="portada" aria-label="Portada institucional">
+      <div class="portada-logos">
+        <div class="marca marca-itao">
+          <img src="ITAO_logo.png" alt="Logotipo del Instituto Tecnológico de Álvaro Obregón">
+        </div>
+        <div class="separador-logos" aria-hidden="true"></div>
+        <div class="marca marca-tecnm">
+          <img src="TECNM_logo.png" alt="Logotipo del Tecnológico Nacional de México">
+        </div>
+      </div>
+      <div class="cinta">#TodosSomosTECNM</div>
+      <div class="portada-cuerpo">
+        <span class="etiqueta-portada">EVALUACIÓN</span>
+        <h1>Cuestionario del Sistema de Gestión Ambiental</h1>
+        <p>Instituto Tecnológico de Álvaro Obregón · Tecnológico Nacional de México</p>
+      </div>
+    </header>
+
+    <main class="contenedor-principal">
+
+      <section class="acceso-publico" aria-labelledby="titulo-compartir-cuestionario">
+        <div>
+          <h2 id="titulo-compartir-cuestionario">Invita a otras personas a responder</h2>
+          <p>Comparte el enlace de este cuestionario con cualquier contacto o grupo de WhatsApp. Cada participante obtendrá su propia calificación.</p>
+        </div>
+        <button type="button" class="boton boton-primario" id="compartir-cuestionario">
+          Compartir cuestionario por WhatsApp
+        </button>
+        <div class="mensaje-enlace" id="aviso-enlace" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="titulo-datos">
+        <h2 id="titulo-datos" class="titulo-seccion">Datos del participante</h2>
+        <p class="descripcion-seccion">Opcionales. Se incluirán en el resultado si decides compartirlo por WhatsApp.</p>
+        <div class="cuadricula-campos">
+          <div class="campo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" maxlength="100" placeholder="Nombre completo" autocomplete="name">
+          </div>
+          <div class="campo">
+            <label for="carrera">Carrera o área</label>
+            <input type="text" id="carrera" maxlength="90" placeholder="Carrera / departamento">
+          </div>
+          <div class="campo">
+            <label for="semestre">Semestre</label>
+            <input type="text" id="semestre" maxlength="30" placeholder="Ej. 6.º">
+          </div>
+        </div>
+      </section>
+
+      <div class="barra-fija" aria-label="Progreso del cuestionario">
+        <div class="barra-cabecera">
+          <span>Tu progreso</span>
+          <span id="contador">0 de 12 respondidas</span>
+        </div>
+        <div class="pista">Selecciona una respuesta por pregunta. La clave se muestra únicamente después de evaluar.</div>
+        <div class="barra-pista" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" aria-label="Preguntas contestadas" id="progreso">
+          <div class="barra-avance" id="barra-avance"></div>
+        </div>
+      </div>
+
+      <form id="cuestionario" novalidate>
+        <div class="lista-preguntas" id="lista-preguntas"></div>
+        <section class="panel panel-final" aria-label="Finalizar cuestionario">
+          <h2 class="titulo-seccion">¿Terminaste el cuestionario?</h2>
+          <p>Evalúa tus 12 respuestas para conocer tu puntuación y preparar el mensaje para WhatsApp.</p>
+          <div class="botones">
+            <button type="submit" class="boton boton-primario" id="evaluar">Evaluar mis respuestas</button>
+            <button type="button" class="boton boton-secundario" id="reiniciar">Volver a comenzar</button>
+          </div>
+          <div class="aviso" id="mensaje-aviso" role="status" aria-live="polite"></div>
+        </section>
+      </form>
+
+      <section id="resultado" class="resultado" hidden aria-live="polite" tabindex="-1">
+        <span class="etiqueta-portada" style="border-color: var(--azul); color: var(--azul);">Resultado generado</span>
+        <h2>¡Has terminado!</h2>
+        <div class="calificacion" id="calificacion">0 / 12</div>
+        <div class="detalle-resultado" id="detalle-resultado"></div>
+        <div class="botones">
+          <a class="boton boton-primario" id="enviar-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="Compartir resultado con cualquier contacto de WhatsApp">
+            Compartir con cualquier contacto de WhatsApp
+          </a>
+          <button type="button" class="boton boton-secundario" id="copiar-resultado">Copiar resultado</button>
+        </div>
+        <p class="aviso" id="mensaje-copia" role="status" aria-live="polite"></p>
+        <p class="aviso-privacidad">Al pulsar el botón, selecciona cualquier contacto o grupo en WhatsApp y confirma el envío. No se configura ningún número de destino.</p>
+        <p class="aviso-privacidad">Las respuestas se califican en este navegador. No se guardan ni envían a un servidor. WhatsApp solo recibe los datos del resultado si decides pulsar «Compartir resultado».</p>
+      </section>
+    </main>
+    <footer>Instituto Tecnológico de Álvaro Obregón · TecNM | Sistema de Gestión Ambiental</footer>
+  </div>
+
+  <script>
+    "use strict";
+
+    /* =================================================================
+       PREGUNTAS Y CLAVES: OPCIONES EN EL ORDEN ORIGINAL DEL CUESTIONARIO
+       "correcta" corresponde a a=0, b=1, c=2.
+       ================================================================= */
+    const preguntas = [
+      {
+        pregunta: "¿Qué norma toma como referencia el Manual del Sistema de Gestión Ambiental del TecNM?",
+        opciones: ["ISO 9001:2015", "ISO 14001:2015", "ISO 45001:2018"],
+        correcta: 1
+      },
+      {
+        pregunta: "¿Cuál es el alcance del SGA del TecNM?",
+        opciones: [
+          "Solo los laboratorios y talleres de los institutos",
+          "Únicamente la Dirección General del TecNM",
+          "Todas las actividades, procesos, productos y servicios del Proceso Educativo que se realizan en el TecNM"
+        ],
+        correcta: 2
+      },
+      {
+        pregunta: "¿Quién es el Presidente del Comité de Gestión Ambiental de cada Instituto Tecnológico o Centro?",
+        opciones: [
+          "El Director del Instituto Tecnológico o Centro",
+          "El Responsable del SGA",
+          "El Coordinador del Sistema de Gestión Ambiental"
+        ],
+        correcta: 0
+      },
+      {
+        pregunta: "¿Cuál es la norma nacional equivalente a la ISO 14001:2015?",
+        opciones: ["NMX-CC-9001-IMNC-2015", "NOM-052-SEMARNAT-2005", "NMX-SAA-14001-IMNC-2015"],
+        correcta: 2
+      },
+      {
+        pregunta: "¿Con qué código se identifica el Procedimiento para la Identificación y Evaluación de Aspectos Ambientales Significativos?",
+        opciones: ["TecNM-GA-PR-01", "TecNM-GA-PR-02", "TecNM-GA-PR-08"],
+        correcta: 0
+      },
+      {
+        pregunta: "¿Cuál de los siguientes es un objetivo ambiental establecido por el TecNM?",
+        opciones: [
+          "Reducción del uso de papel en oficinas administrativas",
+          "Uso racional y eficaz de la energía eléctrica",
+          "Fomento del transporte público entre estudiantes"
+        ],
+        correcta: 1
+      },
+      {
+        pregunta: "¿Qué procedimiento describe el tratamiento para identificar situaciones de emergencia y accidentes reales y potenciales?",
+        opciones: [
+          "TecNM-GA-PR-03, Procedimiento de Comunicación del SGA",
+          "TecNM-GA-PR-09, Procedimiento de competencia, formación y toma de conciencia",
+          "TecNM-GA-PR-08, Procedimiento de preparación y respuesta ante emergencias"
+        ],
+        correcta: 2
+      },
+      {
+        pregunta: "¿Con qué frecuencia mínima la Alta Dirección revisa el SGA según el manual?",
+        opciones: ["Al menos una vez al año", "Cada seis meses", "Cada tres años"],
+        correcta: 0
+      },
+      {
+        pregunta: "¿Qué debe incluir anualmente el Programa de Capacitación en relación con el SGA?",
+        opciones: [
+          "Un diplomado completo en gestión ambiental",
+          "Al menos un curso relacionado con la implementación y mejora del SGA",
+          "Una auditoría externa para todo el personal"
+        ],
+        correcta: 1
+      },
+      {
+        pregunta: "¿Cuál es el propósito de las auditorías internas del SGA?",
+        opciones: [
+          "Sancionar al personal que incumpla los procedimientos",
+          "Sustituir la Revisión por la Dirección",
+          "Determinar si el SGA es conforme con lo planificado y la norma, y si se ha implementado y mantiene adecuadamente"
+        ],
+        correcta: 2
+      },
+      {
+        pregunta: "¿Cuál es el esquema que utiliza el TecNM como estrategia para alcanzar la certificación de su SGA?",
+        opciones: [
+          "Un esquema multi sitios",
+          "Una certificación individual por cada departamento",
+          "Una certificación única solo para la sede central"
+        ],
+        correcta: 0
+      },
+      {
+        pregunta: "¿Cómo se estructura la documentación del SGA, de la parte superior a la base de la pirámide?",
+        opciones: [
+          "Registros, Instructivos de Trabajo, Procedimientos, Política Ambiental, Manual de Gestión Ambiental",
+          "Política Ambiental, Manual de Gestión Ambiental, Registros, Procedimientos, Instructivos de Trabajo",
+          "Manual de Gestión Ambiental, Política Ambiental, Procedimientos, Instructivos de Trabajo, Registros"
+        ],
+        correcta: 2
+      }
+    ];
+
+    const letras = ["a", "b", "c"];
+    const lista = document.getElementById("lista-preguntas");
+    const formulario = document.getElementById("cuestionario");
+    const resultado = document.getElementById("resultado");
+    const aviso = document.getElementById("mensaje-aviso");
+    const compartir = document.getElementById("enviar-whatsapp");
+    const mensajeCopia = document.getElementById("mensaje-copia");
+    let textoCompartir = "";
+
+    // Escapar texto antes de insertarlo en HTML para evitar interpretaciones accidentales.
+    function escaparHTML(valor) {
+      return String(valor).replace(/[&<>"']/g, caracter => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[caracter]);
+    }
+
+    function construirPreguntas() {
+      lista.innerHTML = preguntas.map((item, indice) => `
+        <section class="pregunta" id="pregunta-${indice + 1}" aria-labelledby="enunciado-${indice + 1}">
+          <div class="encabezado-pregunta">
+            <span class="numero" aria-hidden="true">${String(indice + 1).padStart(2, "0")}</span>
+            <h2 id="enunciado-${indice + 1}">${escaparHTML(item.pregunta)}</h2>
+          </div>
+          <div class="opciones" role="radiogroup" aria-labelledby="enunciado-${indice + 1}">
+            ${item.opciones.map((opcion, indiceOpcion) => `
+              <label class="opcion">
+                <input type="radio" name="pregunta_${indice}" value="${indiceOpcion}" aria-label="Opción ${letras[indiceOpcion]}: ${escaparHTML(opcion)}">
+                <span><strong>${letras[indiceOpcion]})</strong> ${escaparHTML(opcion)}</span>
+              </label>
+            `).join("")}
+          </div>
+          <div class="retroalimentacion" aria-live="polite"></div>
+        </section>
+      `).join("");
+    }
+
+    function obtenerSeleccion(indice) {
+      const radio = formulario.querySelector(`input[name="pregunta_${indice}"]:checked`);
+      return radio ? Number(radio.value) : null;
+    }
+
+    function actualizarProgreso() {
+      const contestadas = preguntas.filter((_, indice) => obtenerSeleccion(indice) !== null).length;
+      document.getElementById("contador").textContent = `${contestadas} de ${preguntas.length} respondidas`;
+      document.getElementById("progreso").setAttribute("aria-valuenow", String(contestadas));
+      document.getElementById("barra-avance").style.width = `${(contestadas / preguntas.length) * 100}%`;
+    }
+
+    function limpiarEvaluacion() {
+      resultado.hidden = true;
+      textoCompartir = "";
+      compartir.removeAttribute("href");
+      mensajeCopia.textContent = "";
+      document.querySelectorAll(".pregunta").forEach(tarjeta => {
+        tarjeta.classList.remove("evaluada", "sin-responder");
+        tarjeta.querySelectorAll(".opcion").forEach(opcion => {
+          opcion.classList.remove("correcta", "incorrecta");
+        });
+        tarjeta.querySelector(".retroalimentacion").textContent = "";
+      });
+    }
+
+    function construirMensajeWhatsApp(aciertos) {
+      const nombre = document.getElementById("nombre").value.trim();
+      const carrera = document.getElementById("carrera").value.trim();
+      const semestre = document.getElementById("semestre").value.trim();
+      const porcentaje = Math.round((aciertos / preguntas.length) * 100);
+      const fecha = new Intl.DateTimeFormat("es-MX", {day: "2-digit", month: "long", year: "numeric"}).format(new Date());
+
+      const lineas = [
+        "RESULTADO DEL CUESTIONARIO SGA · TecNM",
+        "Instituto Tecnológico de Álvaro Obregón",
+        "",
+        ...(nombre ? [`Nombre: ${nombre}`] : []),
+        ...(carrera ? [`Carrera o área: ${carrera}`] : []),
+        ...(semestre ? [`Semestre: ${semestre}`] : []),
+        `Fecha: ${fecha}`,
+        "",
+        `Calificación: ${aciertos}/${preguntas.length} (${porcentaje}%)`,
+        `Correctas: ${aciertos} | Incorrectas: ${preguntas.length - aciertos}`,
+        "",
+        "Detalle de respuestas:"
+      ];
+
+      preguntas.forEach((item, indice) => {
+        const elegida = obtenerSeleccion(indice);
+        const esCorrecta = elegida === item.correcta;
+        lineas.push(
+          `${indice + 1}. ${esCorrecta ? "✅" : "❌"} Mi respuesta: ${letras[elegida]}) ${item.opciones[elegida]}`
+        );
+        if (!esCorrecta) {
+          lineas.push(`   Correcta: ${letras[item.correcta]}) ${item.opciones[item.correcta]}`);
+        }
+      });
+
+      lineas.push("", "Resultado generado automáticamente por el cuestionario SGA del ITAO · TecNM.");
+      return lineas.join("\n");
+    }
+
+    function evaluar(evento) {
+      evento.preventDefault();
+      limpiarEvaluacion();
+      actualizarProgreso();
+
+      const incompletas = preguntas
+        .map((_, indice) => obtenerSeleccion(indice) === null ? indice : -1)
+        .filter(indice => indice !== -1);
+
+      if (incompletas.length) {
+        aviso.textContent = `Faltan ${incompletas.length} ${incompletas.length === 1 ? "pregunta" : "preguntas"} por responder. Se ha señalado la primera.`;
+        const primera = document.getElementById(`pregunta-${incompletas[0] + 1}`);
+        primera.classList.add("sin-responder");
+        primera.scrollIntoView({behavior: "smooth", block: "center"});
+        primera.querySelector("input").focus({preventScroll: true});
+        return;
+      }
+
+      aviso.textContent = "¡Evaluación completada! Revisa tu puntuación y compártela si lo deseas.";
+      let aciertos = 0;
+
+      preguntas.forEach((item, indice) => {
+        const tarjeta = document.getElementById(`pregunta-${indice + 1}`);
+        const elegida = obtenerSeleccion(indice);
+        const esCorrecta = elegida === item.correcta;
+        if (esCorrecta) aciertos++;
+
+        tarjeta.classList.add("evaluada");
+        const opciones = tarjeta.querySelectorAll(".opcion");
+        opciones[item.correcta].classList.add("correcta");
+        if (!esCorrecta) opciones[elegida].classList.add("incorrecta");
+
+        tarjeta.querySelector(".retroalimentacion").textContent = esCorrecta
+          ? "✓ Respuesta correcta."
+          : `Respuesta correcta: ${letras[item.correcta]}) ${item.opciones[item.correcta]}`;
+      });
+
+      const porcentaje = Math.round((aciertos / preguntas.length) * 100);
+      document.getElementById("calificacion").textContent = `${aciertos} / ${preguntas.length}`;
+      document.getElementById("detalle-resultado").textContent =
+        `Calificación: ${porcentaje}%. Has respondido correctamente ${aciertos} de ${preguntas.length} preguntas. ` +
+        "En las tarjetas encontrarás la revisión de cada respuesta.";
+
+      textoCompartir = construirMensajeWhatsApp(aciertos);
+      // Sin número de teléfono: WhatsApp mostrará la selección de contactos o grupos.
+      compartir.href = `https://wa.me/?text=${encodeURIComponent(textoCompartir)}`;
+      resultado.hidden = false;
+      resultado.scrollIntoView({behavior: "smooth", block: "start"});
+      resultado.focus({preventScroll: true});
+    }
+
+    // La modificación de una respuesta invalida la evaluación anterior.
+    formulario.addEventListener("change", evento => {
+      if (evento.target.matches('input[type="radio"]')) {
+        limpiarEvaluacion();
+        aviso.textContent = "";
+        actualizarProgreso();
+      }
+    });
+
+    formulario.addEventListener("submit", evaluar);
+
+    document.getElementById("reiniciar").addEventListener("click", () => {
+      formulario.reset();
+      limpiarEvaluacion();
+      actualizarProgreso();
+      aviso.textContent = "El cuestionario se reinició. Tus datos personales permanecen en sus campos.";
+      document.querySelector(".barra-fija").scrollIntoView({behavior: "smooth", block: "start"});
+    });
+
+    // Si se editan los datos personales tras evaluar, el mensaje debe regenerarse
+    // con esos datos para no compartir información desactualizada.
+    ["nombre", "carrera", "semestre"].forEach(id => {
+      document.getElementById(id).addEventListener("input", () => {
+        if (!resultado.hidden) {
+          const aciertos = preguntas.reduce((total, item, indice) =>
+            total + (obtenerSeleccion(indice) === item.correcta ? 1 : 0), 0);
+          textoCompartir = construirMensajeWhatsApp(aciertos);
+          compartir.href = `https://wa.me/?text=${encodeURIComponent(textoCompartir)}`;
+        }
+      });
+    });
+
+    document.getElementById("copiar-resultado").addEventListener("click", async () => {
+      if (!textoCompartir) return;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(textoCompartir);
+        } else {
+          const auxiliar = document.createElement("textarea");
+          auxiliar.value = textoCompartir;
+          auxiliar.style.position = "fixed";
+          auxiliar.style.left = "-9999px";
+          document.body.appendChild(auxiliar);
+          auxiliar.select();
+          const correcto = document.execCommand("copy");
+          auxiliar.remove();
+          if (!correcto) throw new Error("Copia no permitida");
+        }
+        mensajeCopia.textContent = "Resultado copiado. Puedes pegarlo en cualquier conversación.";
+      } catch (_) {
+        mensajeCopia.textContent = "Tu navegador no permitió copiar automáticamente. Utiliza el botón de WhatsApp.";
+      }
+    });
+
+
+    // Comparte el URL real de la página (incluye /cuestionario.html).
+    // No inserta números de teléfono: WhatsApp permite elegir destinatario.
+    // localhost y direcciones privadas no pueden abrirse desde Internet.
+    function esDireccionLocal(hostname) {
+      const h = hostname.toLowerCase();
+      return h === "localhost" || h === "127.0.0.1" || h === "::1" || h === "[::1]" ||
+             h.endsWith(".local") || h.startsWith("192.168.") || h.startsWith("10.") ||
+             /^172\.(1[6-9]|2[0-9]|3[01])\./.test(h);
+    }
+
+    document.getElementById("compartir-cuestionario").addEventListener("click", () => {
+      const avisoEnlace = document.getElementById("aviso-enlace");
+      if (esDireccionLocal(window.location.hostname) || window.location.protocol === "file:") {
+        avisoEnlace.textContent = "Abre primero el enlace público HTTPS de Cloudflare (terminado en /cuestionario.html). El enlace localhost:8001 no funciona en los celulares de otras personas.";
+        return;
+      }
+      avisoEnlace.textContent = "Selecciona en WhatsApp el contacto o grupo al que quieras enviar el acceso.";
+      const urlPublica = window.location.href;
+      const mensaje = [
+        "CUESTIONARIO SGA · TecNM",
+        "Instituto Tecnológico de Álvaro Obregón",
+        "",
+        "Responde las 12 preguntas y conoce tu calificación:",
+        urlPublica
+      ].join("\n");
+      const enlace = "https://wa.me/?text=" + encodeURIComponent(mensaje);
+      // Abrir en el gesto directo del usuario mejora compatibilidad con bloqueadores de ventanas.
+      window.open(enlace, "_blank", "noopener,noreferrer");
+    });
+
+    construirPreguntas();
+    actualizarProgreso();
+  </script>
+</body>
+</html>
